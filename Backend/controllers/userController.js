@@ -5,13 +5,14 @@ const db = require("../sqlConnection");
 
 exports.signup = (req, res) => {
   let query = `INSERT INTO user 
-        (username, email, password) VALUES (?, ?, ?);`;
+        (username, email, password, photo) VALUES (?, ?, ?, ?);`;
 
   // Value to be inserted
 
   let userName = req.body.username;
   let userEmail = req.body.email;
   let userPassword = req.body.password;
+  let userPhoto = req.body.photo;
 
   // Check data of user
 
@@ -36,7 +37,7 @@ exports.signup = (req, res) => {
       res.status(201).json(1);
     } else {
       bcrypt.hash(userPassword, 10).then((hash) => {
-        db.query(query, [userName, userEmail, hash], (err, rows) => {
+        db.query(query, [userName, userEmail, hash, userPhoto], (err, rows) => {
           if (err) throw err;
           res.status(201).json(0);
         });

@@ -73,6 +73,7 @@ function SignIn(props) {
       username: UserValue,
       email: emailValue,
       password: passwordValue,
+      photo: undefined,
     }).then((res) => {
       setResError(res.data);
       if (res.data === 0) {
