@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const fs = require("fs");
 
 const db = require("../sqlConnection");
 
@@ -81,4 +82,81 @@ exports.login = (req, res) => {
         });
     }
   });
+};
+
+exports.allUser = (req, res) => {
+  let query = `SELECT * FROM user;`;
+  db.query(query, function (err, result, fields) {
+    if (err) res.status(401).json(err);
+    let test = result.map((el) => {
+      return { id: el.id, username: el.username, photo: el.photo };
+    });
+    res.status(200).json(test);
+  });
+};
+
+exports.oneUser = (req, res) => {
+  try {
+    const token = req.headers.authorization.split(" ")[1];
+    const decodedToken = jwt.verify(token, "RANDOM_TOKEN_SECRET");
+    const userId = decodedToken.userId;
+
+    let query = `SELECT * FROM user WHERE id=?;`;
+    db.query(query, userId, function (err, result, fields) {
+      if (err) throw err;
+      res.status(201).json(result);
+    });
+  } catch {
+    res.status(401).json({
+      error: new Error("Invalid request!"),
+    });
+  }
+};
+
+exports.deleteUser = (req, res) => {
+  const token = req.headers.authorization.split(" ")[1];
+  const decodedToken = jwt.verify(token, "RANDOM_TOKEN_SECRET");
+  const userId = decodedToken.userId;
+
+  let query = `DELETE FROM post WHERE userId = ?`;
+  let query2 = `DELETE FROM user WHERE id = ?`;
+
+  db.query(query, userId, (error, results, fields) => {
+    if (error) return console.error(error.message);
+    console.log("Deleted Row(s):", results.affectedRows);
+    db.query(query2, userId, function (err, result, fields) {
+      if (err) throw err;
+      console.log(result);
+    });
+  });
+  res.status(201).json({ message: "delete" });
+};
+
+exports.updateUser = (req, res) => {
+  let query = `UPDATE user
+  SET photo = ?
+  WHERE id = ?`;
+
+  const token = req.headers.authorization.split(" ")[1];
+  const decodedToken = jwt.verify(token, "RANDOM_TOKEN_SECRET");
+  const userId = decodedToken.userId;
+
+  let postImage = `${req.protocol}://${req.get("host")}/images/${
+    req.file.filename
+  }`;
+
+  let queryPost = "SELECT * FROM user WHERE id=?";
+
+  db.query(queryPost, userId, (error, results, fields) => {
+    if (error) return console.error(error.message);
+    const filename = results[0].photo.split("/images/")[1];
+    fs.unlink(`images/${filename}`, () => {
+      db.query(query, [postImage, userId], function (err, result, fields) {
+        if (err) throw err;
+        console.log(result);
+        res.status(201).json(result);
+      });
+    });
+  });
+
 };

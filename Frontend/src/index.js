@@ -7,6 +7,7 @@ import Feed from "./page/Feed";
 import PrivateRoute from "./components/PrivateRoute";
 import RestrictedRoute from "./components/RestrictedRoute";
 import Auth from "./page/Authentification/Auth";
+import Profile from "./page/Profile";
 
 ReactDOM.render(
   <BrowserRouter>
@@ -26,6 +27,14 @@ ReactDOM.render(
           element={
             <PrivateRoute>
               <Feed />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <PrivateRoute>
+              <Profile />
             </PrivateRoute>
           }
         />

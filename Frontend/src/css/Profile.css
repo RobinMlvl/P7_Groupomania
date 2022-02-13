@@ -1,0 +1,119 @@
+.logout {
+    width: 64px;
+    margin: auto;
+    margin-top: 0px;
+    margin-bottom: 40px;
+}
+
+.logout p {
+    text-align: center;
+    color: rgb(209, 81, 90);
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    display: inline;
+}
+
+.logout p:hover {
+    text-shadow: 1px 0px rgba(0, 0, 0, 0.4);
+}
+
+.background-profile {
+    padding: 5px;
+    display: inline-block;
+    width: 150px;
+    height: 150px;
+    border-radius: 150px;
+    color: white;
+    object-fit: cover;
+    background-color: rgb(209, 81, 90);
+}
+
+.card {
+    background-color: rgb(209, 81, 90);
+    width: 300px;
+    margin: auto;
+    margin-bottom: 30px;
+    border-radius: 20px;
+    box-shadow: 0px 0px 10px 1px rgba(0,0,0,0.4);
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.card p {
+    color: white;
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+.delete {
+    background-color: rgb(209, 81, 90);
+    box-shadow: 0px 0px 10px 1px rgba(0,0,0,0.2);
+    width: 200px;
+    margin: auto;
+    padding: 1px;
+    border-radius: 20px;
+    cursor: pointer;
+    margin-top: 0px;
+}
+
+.delete:hover {
+    box-shadow: 0px 0px 10px 1px rgba(0,0,0,0.6);   
+}
+
+.delete p {
+    color: white;
+    text-align: center;
+    font-weight: bold;
+}
+
+.add-image {
+    background-color: white;
+    padding: 4px 9px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px 1px rgba(0,0,0,0.6);  
+    margin-top: 15px;
+    cursor: pointer;
+}
+
+.add-image p{
+   color: rgb(209, 81, 90);
+   margin: 0px;
+}
+
+.save {
+    background-color: white;
+    padding: 4px 9px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px 1px rgba(0,0,0,0.6);  
+    margin-top: 15px;
+    cursor: pointer;
+}
+
+.save p {
+    color: rgb(209, 81, 90);
+   margin: 0px;
+   font-weight: bold;
+   font-size: 20px;
+}
+
+.center {
+    display: flex;
+justify-content: center;
+flex-direction: column;
+align-content: center;
+height: 100vh;
+}
+
+h1 {
+    margin: 0px;
+    color: white;
+    font-weight: bold;
+}
+hr {
+    width: 100%;
+    color: white;
+}

@@ -29,7 +29,6 @@ function SignIn(props) {
       setResError(res.data);
       if(res.data !== 2 && res.data !== 5) {
         localStorage.setItem('token', res.data.token);
-        localStorage.setItem('user', JSON.stringify(res.data.user));
         navigate("/feed");
       }
     })
