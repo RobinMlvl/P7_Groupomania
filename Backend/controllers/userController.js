@@ -149,14 +149,21 @@ exports.updateUser = (req, res) => {
 
   db.query(queryPost, userId, (error, results, fields) => {
     if (error) return console.error(error.message);
-    const filename = results[0].photo.split("/images/")[1];
-    fs.unlink(`images/${filename}`, () => {
+    if (results[0].photo) {
+      const filename = results[0].photo.split("/images/")[1];
+      fs.unlink(`images/${filename}`, () => {
+        db.query(query, [postImage, userId], function (err, result, fields) {
+          if (err) throw err;
+          console.log(result);
+          res.status(201).json(result);
+        });
+      });
+    } else {
       db.query(query, [postImage, userId], function (err, result, fields) {
         if (err) throw err;
         console.log(result);
         res.status(201).json(result);
       });
-    });
+    }
   });
-
 };

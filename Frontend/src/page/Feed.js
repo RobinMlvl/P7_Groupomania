@@ -102,7 +102,7 @@ function Feed() {
 
     Axios.put(
       "http://localhost:5000/feed/deletecomment",
-      {comment: filter, postId},
+      { comment: filter, postId },
       { headers }
     ).then((res) => {
       refreshFeed();
@@ -274,7 +274,8 @@ function Feed() {
                           );
                           return (
                             <div key={Math.random()} className="block-comment">
-                              {commentIndex[0] !== undefined ? (
+                              {commentIndex[0] !== undefined &&
+                              commentIndex[0].photo !== "" ? (
                                 <img
                                   src={commentIndex[0].photo}
                                   alt="profile of person"
@@ -294,12 +295,17 @@ function Feed() {
                                   <p>{commentIndex[0].username}</p>
                                 )}
                                 <p>{test.comment}</p>
-                                {myData.id === test.userId &&
-                                  <div className="divDelete" onClick={() => deleteComment(test, item, postId)}>
-                                  <p>Delete</p>
-                                  <Delete className="icondelete"/>
+                                {myData.id === test.userId && (
+                                  <div
+                                    className="divDelete"
+                                    onClick={() =>
+                                      deleteComment(test, item, postId)
+                                    }
+                                  >
+                                    <p>Delete</p>
+                                    <Delete className="icondelete" />
                                   </div>
-                                }
+                                )}
                               </div>
                             </div>
                           );
