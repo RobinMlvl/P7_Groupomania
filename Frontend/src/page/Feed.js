@@ -277,15 +277,15 @@ function Feed() {
                               {commentIndex[0] !== undefined &&
                               commentIndex[0].photo !== "" ? (
                                 <img
-                                  src={commentIndex[0].photo}
-                                  alt="profile of person"
-                                  className="comment-photo2"
-                                />
-                              ) : (
-                                <img
                                   src={logo}
                                   alt="profile of person"
                                   className="comment-photo"
+                                />
+                              ) : (
+                                <img
+                                  src={commentIndex[0].photo}
+                                  alt="profile of person"
+                                  className="comment-photo2"
                                 />
                               )}
                               <div className="block-commentdiv">
@@ -295,17 +295,18 @@ function Feed() {
                                   <p>{commentIndex[0].username}</p>
                                 )}
                                 <p>{test.comment}</p>
-                                {myData.id === test.userId && (
-                                  <div
-                                    className="divDelete"
-                                    onClick={() =>
-                                      deleteComment(test, item, postId)
-                                    }
-                                  >
-                                    <p>Delete</p>
-                                    <Delete className="icondelete" />
-                                  </div>
-                                )}
+                                {myData.id === test.userId ||
+                                  myData.admin === 1 ? (
+                                    <div
+                                      className="divDelete"
+                                      onClick={() =>
+                                        deleteComment(test, item, postId)
+                                      }
+                                    >
+                                      <p>Delete</p>
+                                      <Delete className="icondelete" />
+                                    </div>
+                                  ) : null}
                               </div>
                             </div>
                           );

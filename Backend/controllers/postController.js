@@ -2,6 +2,8 @@ const db = require("../sqlConnection");
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
 
+require("dotenv").config();
+
 exports.send = (req, res) => {
   let query = `INSERT INTO post (userId, text, image, date, liked, disliked, userLiked, userDisliked, comment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);`;
 
@@ -104,56 +106,91 @@ exports.updatePost = (req, res) => {
   let id = req.params.id;
   let text = req.body.text;
 
-  if (req.file) {
-    let image = `${req.protocol}://${req.get("host")}/images/${
-      req.file.filename
-    }`;
-    let query = `UPDATE post SET text = ?, image = ? WHERE id = ?`;
+  let queryPost = "SELECT * FROM post WHERE id=?";
+  let queryUser = `SELECT * FROM user WHERE id=?;`;
 
-    let queryPost = "SELECT * FROM post WHERE id=?";
+  const token = req.headers.authorization.split(" ")[1];
+  const decodedToken = jwt.verify(token, process.env.TOKEN_PASSWORD);
+  const userId = decodedToken.userId;
 
-    db.query(queryPost, id, (error, results, fields) => {
-      if (error) return console.error(error.message);
-      const filename = results[0].image.split("/images/")[1];
-      fs.unlink(`images/${filename}`, () => {
-        db.query(query, [text, image, id], (error, results, fields) => {
-          if (error) return console.error(error.message);
-        });
-      });
+  db.query(queryPost, id, (error, results, fields) => {
+    if (error) return console.error(error.message);
+    db.query(queryUser, userId, function (err, userData, fields) {
+      if (err) throw err;
+      let admin = userData[0].admin;
+      let userId = userData[0].id;
+      let postId = results[0].userId;
+
+      if (admin === 1 || userId === postId) {
+        if (req.file) {
+          let image = `${req.protocol}://${req.get("host")}/images/${
+            req.file.filename
+          }`;
+          let query = `UPDATE post SET text = ?, image = ? WHERE id = ?`;
+
+          const filename = results[0].image.split("/images/")[1];
+          fs.unlink(`images/${filename}`, () => {
+            db.query(query, [text, image, id], (error, results, fields) => {
+              if (error) return console.error(error.message);
+            });
+          });
+        } else {
+          let query = `UPDATE post SET text = ? WHERE id = ?`;
+          db.query(query, [text, id], (error, results, fields) => {
+            if (error) return console.error(error.message);
+          });
+        }
+
+        res.status(201).json({ message: "delete" });
+      } else {
+        res.status(201).json({ message: "No permission to update this post" });
+      }
     });
-  } else {
-    let query = `UPDATE post SET text = ? WHERE id = ?`;
-    db.query(query, [text, id], (error, results, fields) => {
-      if (error) return console.error(error.message);
-    });
-  }
-  res.status(200).json(req.body);
+  });
 };
 
 exports.deletePost = (req, res) => {
   let el = req.params.id;
+
+  const token = req.headers.authorization.split(" ")[1];
+  const decodedToken = jwt.verify(token, process.env.TOKEN_PASSWORD);
+  const userId = decodedToken.userId;
+
   let query = `DELETE FROM post WHERE id = ?`;
 
   let queryPost = "SELECT * FROM post WHERE id=?";
 
+  let queryUser = `SELECT * FROM user WHERE id=?;`;
+
   db.query(queryPost, el, (error, results, fields) => {
     if (error) return console.error(error.message);
-    const filename = results[0].image.split("/images/")[1];
-    fs.unlink(`images/${filename}`, () => {
-      db.query(query, el, (error, results, fields) => {
-        if (error) return console.error(error.message);
-        console.log("Deleted Row(s):", results.affectedRows);
-      });
+    db.query(queryUser, userId, function (err, userData, fields) {
+      if (err) throw err;
+      let admin = userData[0].admin;
+      let userId = userData[0].id;
+      let postId = results[0].userId;
+
+      if (admin === 1 || userId === postId) {
+        const filename = results[0].image.split("/images/")[1];
+        fs.unlink(`images/${filename}`, () => {
+          db.query(query, el, (error, results, fields) => {
+            if (error) return console.error(error.message);
+            console.log("Deleted Row(s):", results.affectedRows);
+          });
+        });
+        res.status(201).json({ message: "delete" });
+      } else {
+        res.status(201).json({ message: "No permission to delete this post" });
+      }
     });
   });
-  res.status(201).json({ message: "delete" });
 };
 
 exports.likePost = (req, res) => {
   let number = req.body.number;
   let postId = req.body.id;
   const token = req.headers.authorization.split(" ")[1];
-  const decodedToken = jwt.verify(token, "RANDOM_TOKEN_SECRET");
+  const decodedToken = jwt.verify(token, process.env.TOKEN_PASSWORD);
   const userId = decodedToken.userId;
 
   db.query(

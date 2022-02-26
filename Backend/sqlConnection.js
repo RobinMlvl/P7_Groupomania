@@ -1,9 +1,12 @@
 const mysql = require("mysql")
 
+require('dotenv').config()
+
+
 const db = mysql.createConnection({
     user: 'root',
     host: 'localhost',
-    password: '6mlyhtrdot',
+    password: process.env.SQL_PASSWORD,
     database: 'groupomania',
 });
 
